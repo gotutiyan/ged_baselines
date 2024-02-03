@@ -11,5 +11,5 @@ pip install .
 
 This repository contains scripts for the training of sentence- and token-level GED models.
 
-- [Sentence-leven GED](./sentence_ged/)
-- [Token-leven GED](./token_ged/)
+- [Sentence-level GED](./sentence_ged/)
+- [Token-level GED](./token_ged/)
