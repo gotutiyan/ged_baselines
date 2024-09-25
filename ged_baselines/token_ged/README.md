@@ -6,15 +6,17 @@ This implementation supports binary or multi-class grammatical error detection.
 The input can be either parallel or M2 format.
 
 ```sh
+# If parallel format
 python preprocess.py \
     --src <path to a source file> \
     --trg <path to a target file> \
     --out <output path> \
     --mode bin
 
+# If M2 format
 python preprocess.py \
     --m2 <path to M2 file> \
-    --ref_id <integer of the number of reference> \
+    --ref_id <The reference-id (integer)> \
     --out <output path> \
     --mode bin
 ```
@@ -80,7 +82,7 @@ models/sample
 ```
 
 The `--outdir` directory will be created automatically. The output includes best and last checkpoints.  
-The best checkpoints is determined
+The best checkpoint is determined
 - by the F0.5 for an incorrect label in the binary setting.
 - by the macro F0.5 otherwise (e.g. 4-class setting).
 
@@ -88,7 +90,7 @@ The best checkpoints is determined
 
 ### API
 ```py
-from predict import predict
+from predict import predict_token
 from transformers import AutoModelForTokenClassification, AutoTokenizer
 restore_dir = 'gotutiyan/token-ged-electra-large-bin'
 model = AutoModelForTokenClassification.from_pretrained(restore_dir)
@@ -97,7 +99,7 @@ srcs = ['This are wrong sentece .', 'This is correct .']
 
 # predict() returns word-level error detection labels
 # If return_id=True
-results = predict(
+results = predict_token(
     srcs=srcs,
     model=model,
     tokenizer=tokenizer,
@@ -108,7 +110,7 @@ print(results)
 # An example of outputs: [[0, 1, 0, 1, 0], [0, 0, 0, 0]]
 
 # If return_id=False
-results = predict(
+results = predict_token(
     srcs=srcs,
     model=model,
     tokenizer=tokenizer,
@@ -124,8 +126,8 @@ print(results)
 # Evaluate
 To calculate precision, recall, and F0.5 score, you can use `evaluate.py`.
 
-First, use `preprocess.py` to prepare labels of evaluation data. You can input data as both M2 or parallel format.  
-If the data has multiple reference, you can use `--ref_id` option to specify which annotation will be used.
+First, use `preprocess.py` to prepare labels of evaluation data. You can input data as either M2 or parallel format.  
+If the data has multiple references, you can use `--ref_id` option to specify which annotation will be used.
 
 Second, execute `evaluate.py`.
 ```sh
@@ -146,9 +148,9 @@ This corresponds to Table 2 in [Yuan+ 21](https://aclanthology.org/2021.emnlp-ma
 All of scores are shown in `(Precision/Recall/F0.5)` format.
 |Model|BEA19-dev|FCE-test|CoNLL14 test 1|CoNLL14 test 2|
 |:--|:-:|:-:|:-:|:-:|
-|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), BERT|(65.48 / 42.85 / 59.23)|(75.73 / 47.98 / 67.88)|(49.73 / 34.23 / 45.60)|(64.52 / 32.33 / 53.80)|
-|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), XLNet|(70.03 / 45.55 / 63.23)|(77.50 / 49.81 / 69.75)|(53.23 / 36.17 / 48.64)|(70.68 / 34.95 / 58.68)|
-|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), ELECTRA|(72.81 / 46.85 / 65.54)|(82.05 / 50.49 / 72.93)|(55.15 / 39.78 / 51.19)|(76.44 / 40.13 / 64.73)|
+|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), BERT-large|(65.48 / 42.85 / 59.23)|(75.73 / 47.98 / 67.88)|(49.73 / 34.23 / 45.60)|(64.52 / 32.33 / 53.80)|
+|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), XLNet-large|(70.03 / 45.55 / 63.23)|(77.50 / 49.81 / 69.75)|(53.23 / 36.17 / 48.64)|(70.68 / 34.95 / 58.68)|
+|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), ELECTRA-large|(72.81 / 46.85 / 65.54)|(82.05 / 50.49 / 72.93)|(55.15 / 39.78 / 51.19)|(76.44 / 40.13 / 64.73)|
 |[gotutiyan/token-ged-bert-large-cased-bin](https://huggingface.co/gotutiyan/token-ged-bert-large-cased-bin)| (67.88 / 39.3 / 59.26) | (75.97 / 44.82 / 66.7) | (52.13 / 31.35 / 46.03) | (64.36 / 29.37 / 51.97) |
 |[gotutiyan/token-ged-xlnet-large-cased-bin](https://huggingface.co/gotutiyan/token-ged-xlnet-large-cased-bin)| (72.38 / 40.99 / 62.77) | (77.72 / 46.74 / 68.63) | (54.41 / 34.22 / 48.67) | (67.25 / 32.11 / 55.17) |
 |[gotutiyan/token-ged-electra-large-bin](https://huggingface.co/gotutiyan/token-ged-electra-large-bin)| (74.18 / 48.5 / 67.08) | (82.37 / 55.69 / 75.17) | (55.04 / 42.79 / 52.06) | (72.84 / 42.97 / 63.95) |
@@ -158,10 +160,10 @@ This corresponds to Table 3 in [Yuan+ 21](https://aclanthology.org/2021.emnlp-ma
 The format in each cell is `(binarised F0.5 / macro F0.5)`.
 |Mode|BEA19-dev|FCE-test|
 |:--|:-:|:-:|
-|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), binary|(65.54 / 80.39)|(72.93 / 83.54)|
-|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), 4-class|(66.10 / 67.07)|(72.57 / 70.95)|
-|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), 25-class|(63.08 / 47.28)|(72.08 / 54.59)|
-|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), 55-class|(65.81 / 32.99)|(73.85 / 34.88)|
+|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), (ELECTRA-large), binary|(65.54 / 80.39)|(72.93 / 83.54)|
+|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), (ELECTRA-large), 4-class|(66.10 / 67.07)|(72.57 / 70.95)|
+|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), (ELECTRA-large), 25-class|(63.08 / 47.28)|(72.08 / 54.59)|
+|[Yuan+ 21](https://aclanthology.org/2021.emnlp-main.687/), (ELECTRA-large), 55-class|(65.81 / 32.99)|(73.85 / 34.88)|
 |[gotutiyan/token-ged-electra-large-bin](https://huggingface.co/gotutiyan/token-ged-electra-large-bin)| (67.07 / 81.97) | (75.16 / 85.72) |
 |[gotutiyan/token-ged-electra-large-4cls](https://huggingface.co/gotutiyan/token-ged-electra-large-4cls)|(65.91 / 67.14)|(73.58 / 71.37)|
 |[gotutiyan/token-ged-electra-large-25cls](https://huggingface.co/gotutiyan/token-ged-electra-large-25cls)|(65.04 / 44.33)|(72.59 / 46.73)|
