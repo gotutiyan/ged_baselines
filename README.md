@@ -4,10 +4,12 @@ Confirmed that it works on python3.11.0.
 # Installation
 ```sh
 pip install git+https://github.com/gotutiyan/gecommon
-pip install -e ./
+pip install git+https://github.com/gotutiyan/ged_baselines
 ```
 
 # Token-level Grammatical Error Detection
+The models can be found in [HERE](https://huggingface.co/collections/gotutiyan/token-level-ged-662bd988259fa63f77ca8997).  
+If CUDA is available, the following script automatically uses a GPU.
 ```python
 from transformers import (
     AutoModelForTokenClassification,
@@ -28,3 +30,6 @@ results = predict_token(
 print(results)
 # [['CORRECT', 'VERB:SVA', 'CORRECT', 'SPELL', 'CORRECT'], ['CORRECT', 'CORRECT', 'CORRECT', 'CORRECT']]
 ```
+
+If you use the model `-25cls` or `-55cls`, the output represents error types.  
+The definition of the error types can be referred to Table 2 in the paper: [Automatic Annotation and Evaluation of Error Types for Grammatical Error Correction](https://aclanthology.org/P17-1074/).
