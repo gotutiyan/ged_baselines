@@ -1,6 +1,6 @@
 from transformers import pipeline, AutoModelForTokenClassification, AutoTokenizer
 import argparse
-from predict import predict
+from predict import predict_token
 import json
 from sklearn.metrics import classification_report
 from transformers import pipeline
@@ -21,7 +21,7 @@ def main(args):
     model = AutoModelForTokenClassification.from_pretrained(args.restore_dir)
     tokenizer = AutoTokenizer.from_pretrained(args.restore_dir)
     srcs, labels, id2label = load_json(args.test_json)
-    results = predict(
+    results = predict_token(
         srcs=srcs,
         model=model,
         tokenizer=tokenizer,

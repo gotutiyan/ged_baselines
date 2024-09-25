@@ -1,10 +1,10 @@
 from transformers import pipeline, AutoModelForTokenClassification, AutoTokenizer
 import argparse
-from dataset import generate_dataset_for_inference
+from .dataset import generate_dataset_for_inference
 from torch.utils.data import DataLoader
 import torch
 
-def predict(
+def predict_token(
     srcs,
     model,
     tokenizer,
@@ -44,7 +44,7 @@ def main(args):
         srcs = ['This are wrong sentece .', 'This is correct .']
     else:
         srcs = open(args.input).read().rstrip().split('\n')
-    results = predict(
+    results = predict_token(
         srcs=srcs,
         model=model,
         tokenizer=tokenizer,
